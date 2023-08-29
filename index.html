@@ -1,0 +1,79 @@
+ <!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Display a map on a webpage</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+<style>
+body { margin: 0; padding: 0; }
+#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+#tytl {position: absolute; top: 0; background-color:green; padding:20px;}
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div id="tytl">Ilość bibliotek publicznych w województwach Polski</div>
+
+<script>
+	mapboxgl.accessToken = 'pk.eyJ1IjoiamdvdHRvIiwiYSI6ImNsZ3VyNnZteTF4NTEzaG1ybjRyNGtyYTQifQ.blZl_hvPC_M96QEiyc-CsA';
+    const map = new mapboxgl.Map({
+        container: 'map', // container ID
+        // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
+        style: 'mapbox://styles/jgotto/clherpxyx011h01qtd0kkg9wd', // style URL
+		
+        center: [18.469671182910048, 51.8226176211337], // starting position [lng, lat]
+        zoom: 5.483642595749782 // starting zoom
+    });
+	// Add zoom and rotation controls to the map.
+map.addControl(new mapboxgl.NavigationControl());
+
+	// Add a scale control to the map
+	map.addControl(new mapboxgl.ScaleControl({
+	maxWidth:400,
+	unit:'metric'
+	}),'top-right');;
+	
+	map.on('load', () => {
+	
+// Add a source for the state polygons.
+	map.addSource('states', {
+	'type': 'geojson',
+	'data': 'https://docs.mapbox.com/mapbox-gl-js/assets/ne_110m_admin_1_states_provinces_shp.geojson'
+	});
+ 
+
+ 
+// When a click event occurs on a feature in the states layer,
+// open a popup at the location of the click, with description
+// HTML from the click event's properties.
+
+map.on('click', 'cumeo', (e) => {
+
+new mapboxgl.Popup()
+.setLngLat(e.lngLat)
+.setHTML('<hr>Liczba kin: <b>'+e.features[0].properties.cinemas+'a liczba szpitali to: '+e.features[0].properties.hospitals+ '</b> </br>')
+.addTo(map);
+});
+ 
+	// Change the cursor to a pointer when
+// the mouse is over the states layer.
+
+map.on('mouseenter', 'cumeo', () => {
+
+map.getCanvas().style.cursor = 'pointer';
+});
+ 
+// Change the cursor back to a pointer
+// when it leaves the states layer.
+
+map.on('mouseleave', 'cumeo', () => {
+
+map.getCanvas().style.cursor = '';
+});
+});
+</script>
+
+</body>
+</html>
